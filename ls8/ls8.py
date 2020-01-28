@@ -11,6 +11,7 @@ cpu = CPU()
 cpu.load()
 cpu.run()
 
+# #######################
 # PRINT_BEEJ     = 1  # 0000 0001
 # HALT           = 2  # 0000 0010
 # PRINT_NUM      = 3
@@ -98,5 +99,4 @@ cpu.run()
 #     else:
 #         print(f"Error: Unknown command: {command}")
 #         sys.exit(1)
-# ​
 # ​
