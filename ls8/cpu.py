@@ -80,23 +80,17 @@ class CPU:
         LDI=0b10000010
         HLT=0b00000001
         PRN=0b01000111 
-        print("LDI",LDI)
         while Running:
-            print("Here")
             Command=self.ram_read(self.pc)
-            print("Command", Command)
             if Command == LDI:
-                print("LDI Inside", Command)
                 operand_a=self.ram_read(self.pc+1)
                 operand_b=self.ram_read(self.pc+2)
                 self.ram[operand_a]+=self.ram[operand_b]
                 self.pc+=3
             elif Command == HLT:
-                print("HLT", Command)
                 Running=False
                 self.pc+=1
             elif Command == PRN:
-                print("PRN", Command)
                 self.reg=self.ram[self.pc+1]
                 print(self.ram[self.reg])
                 self.pc+=2
