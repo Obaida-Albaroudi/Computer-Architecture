@@ -556,7 +556,8 @@ Machine code:
 48 0r
 ```
 
-### PRN
+### 
+
 
 `PRN register` pseudo-instruction
 
