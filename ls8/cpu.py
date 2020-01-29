@@ -11,6 +11,7 @@ class CPU:
         self.reg=[0]*8
         self.pc=0
         self.ir=0
+        self.SP=7
 
 
     def load(self):
@@ -77,6 +78,8 @@ class CPU:
         HLT=0b00000001
         PRN=0b01000111 
         MUL=0b10100010
+        PUSH=0b01000101
+        POP=0b01000110
         while Running:
             Command=self.ram_read(self.pc)
             if Command == LDI:
@@ -97,4 +100,20 @@ class CPU:
                 operand_b=self.ram_read(self.pc+2)
                 self.reg[operand_a]=self.reg[operand_a]*self.reg[operand_b]
                 self.pc+=3
+            elif Command==PUSH:
+                reg=self.ram[self.pc+1]
+                val=self.reg[reg]
+                self.reg[self.SP]-=1
+                self.ram[self.reg[self.SP]]= val
+                self.pc+=2
+                
+            elif Command==POP:
+                reg=self.ram[self.pc+1]
+                val=self.ram[self.reg[self.SP]]
+                self.reg[reg]=val
+                self.reg[self.SP] += 1
+                self.pc+=2
+
+
+                
 
