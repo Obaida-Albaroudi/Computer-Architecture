@@ -91,7 +91,9 @@ class CPU:
         L= 0
         E= 0
         G= 0
+
         while Running:
+
 
             Command=self.ram_read(self.pc)
             # print(Command)
@@ -150,41 +152,38 @@ class CPU:
                 self.pc+=3
 
             elif Command == RET:
-                # print("here")
                 return_address=self.reg[self.SP]
                 self.pc=self.ram[return_address]
 
                 self.reg[self.SP]+=1
             elif Command==CMP:
-                # self.alu("CMP", operand_a, operand_b)
-                print("CMP", "{:b}".format(Command),len("{:b}".format(Command)))
                 self.Flags = CMP
-                # print(L,G,E)
-                if self.reg[self.ram_read(self.pc+1)] < self.reg[self.ram_read(self.pc+2)]:
-                    # print(self.Flags,self.reg[self.ram_read(self.pc+1)],self.reg[self.ram_read(self.pc+2)])
-                    
+                if self.reg[self.ram_read(self.pc+1)] < self.reg[self.ram_read(self.pc+2)]:                  
                     L=1
+                    G=0
+                    E=0
                     self.Flags=CMP-0b00000100
                 elif self.reg[self.ram_read(self.pc+1)] > self.reg[self.ram_read(self.pc+2)]:
                     G=1
+                    L=0
+                    E=0
                     self.Flags=CMP-0b00000010
-                    # print("G")
                 elif self.reg[self.ram_read(self.pc+1)] ==self.reg[self.ram_read(self.pc+2)]:
                     E=1
+                    L=0
+                    G=0
                     self.Flags=CMP-0b00000001
-                    # print("E")
                 self.pc+=3
                 
             elif Command==JMP:
-                print("One",self.pc)
                 self.pc = self.reg[self.ram_read(self.pc+1)]
-                print("two", self.pc)
             elif Command==JEQ:
-                if self.Flags:
+                if E==1:
                     self.pc = self.reg[self.ram_read(self.pc+1)]
+                else:
+                    self.pc+=2
             elif Command==JNE:
-                print("JNE", self.Flags, E)
-                if self.Flags ==False:
+                if E ==0:
                     self.pc = self.reg[self.ram_read(self.pc+1)] 
                 else:
                     self.pc+=2
