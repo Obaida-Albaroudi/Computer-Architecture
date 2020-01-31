@@ -80,39 +80,73 @@ class CPU:
         MUL=0b10100010
         PUSH=0b01000101
         POP=0b01000110
+        CALL=0b01010000
+        RET=0b00010001
+        ADD=0b10100000
         while Running:
+
             Command=self.ram_read(self.pc)
             if Command == LDI:
+                # print("LDI")
                 operand_a=self.ram_read(self.pc+1)
                 operand_b=self.ram_read(self.pc+2)
                 self.reg[operand_a]=operand_b
                 self.pc+=3
+                # print(self.pc)
             elif Command == HLT:
+                # print("HLT")
                 Running=False
                 self.pc+=1
             elif Command == PRN:
+                # print("PRN")
                 reg = self.ram[self.pc + 1]
                 # self.reg=self.ram[self.pc+1]
                 print(self.reg[reg])
                 self.pc+=2
             elif Command== MUL:
+                # print("MUL")
                 operand_a=self.ram_read(self.pc+1)
                 operand_b=self.ram_read(self.pc+2)
                 self.reg[operand_a]=self.reg[operand_a]*self.reg[operand_b]
                 self.pc+=3
             elif Command==PUSH:
+                # print("PUSH")
                 reg=self.ram[self.pc+1]
                 val=self.reg[reg]
-                self.reg[self.SP]-=1
+                self.SP-=1
                 self.ram[self.reg[self.SP]]= val
                 self.pc+=2
                 
             elif Command==POP:
+                # print("POP")
                 reg=self.ram[self.pc+1]
                 val=self.ram[self.reg[self.SP]]
                 self.reg[reg]=val
                 self.reg[self.SP] += 1
                 self.pc+=2
+
+            elif Command == CALL:
+                val=self.pc+2
+                
+                reg=self.ram[self.pc+1]
+                subroutine_address=self.reg[reg]
+                self.reg[self.SP]-=1  
+                self.ram[self.reg[self.SP]]=val
+
+                self.pc=subroutine_address  
+            
+            elif Command ==ADD:
+                self.alu("ADD",self.ram_read(self.pc+1),self.ram_read(self.pc+2))
+                self.pc+=3
+
+            elif Command == RET:
+                # print("here")
+                return_address=self.reg[self.SP]
+                self.pc=self.ram[return_address]
+
+                self.reg[self.SP]+=1
+
+
 
 
                 
