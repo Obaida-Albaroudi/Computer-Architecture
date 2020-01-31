@@ -12,7 +12,7 @@ class CPU:
         self.pc=0
         self.ir=0
         self.SP=7
-        self.Flags = 0 
+        self.Flags = [0]*8
 
 
     def load(self):
@@ -88,9 +88,9 @@ class CPU:
         JMP=0b01010100
         JEQ=0b01010101
         JNE=0b01010110
-        L= 1
-        E= 1
-        G= 1
+        L= 0
+        E= 0
+        G= 0
         while Running:
 
             Command=self.ram_read(self.pc)
@@ -157,27 +157,28 @@ class CPU:
                 self.reg[self.SP]+=1
             elif Command==CMP:
                 # self.alu("CMP", operand_a, operand_b)
-                # print("CMP")
-                self.Flags = 0
-                # print(self.Flags)
+                print("CMP", "{:b}".format(Command),len("{:b}".format(Command)))
+                self.Flags = CMP
                 # print(L,G,E)
                 if self.reg[self.ram_read(self.pc+1)] < self.reg[self.ram_read(self.pc+2)]:
                     # print(self.Flags,self.reg[self.ram_read(self.pc+1)],self.reg[self.ram_read(self.pc+2)])
-                    self.Flags= L
-                    # L=1
-                    # print("L")
+                    
+                    L=1
+                    self.Flags=CMP-0b00000100
                 elif self.reg[self.ram_read(self.pc+1)] > self.reg[self.ram_read(self.pc+2)]:
-                    self.Flags= G
-                    # G=1
+                    G=1
+                    self.Flags=CMP-0b00000010
                     # print("G")
                 elif self.reg[self.ram_read(self.pc+1)] ==self.reg[self.ram_read(self.pc+2)]:
-                    self.Flags= E
-                    # E=1
+                    E=1
+                    self.Flags=CMP-0b00000001
                     # print("E")
                 self.pc+=3
                 
             elif Command==JMP:
+                print("One",self.pc)
                 self.pc = self.reg[self.ram_read(self.pc+1)]
+                print("two", self.pc)
             elif Command==JEQ:
                 if self.Flags:
                     self.pc = self.reg[self.ram_read(self.pc+1)]
