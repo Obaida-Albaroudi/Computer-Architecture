@@ -12,6 +12,7 @@ class CPU:
         self.pc=0
         self.ir=0
         self.SP=7
+        self.Flags = 0 
 
 
     def load(self):
@@ -87,22 +88,27 @@ class CPU:
         JMP=0b01010100
         JEQ=0b01010101
         JNE=0b01010110
+        L= 1
+        E= 1
+        G= 1
         while Running:
 
             Command=self.ram_read(self.pc)
+            # print(Command)
             if Command == LDI:
                 # print("LDI")
                 operand_a=self.ram_read(self.pc+1)
                 operand_b=self.ram_read(self.pc+2)
                 self.reg[operand_a]=operand_b
+                # print("LDI", self.reg)
                 self.pc+=3
-                # print(self.pc)
+                # print(self.reg)
             elif Command == HLT:
-                # print("HLT")
+                print("HLT")
                 Running=False
                 self.pc+=1
             elif Command == PRN:
-                # print("PRN")
+                # print("PRN", self.reg)
                 reg = self.ram[self.pc + 1]
                 # self.reg=self.ram[self.pc+1]
                 print(self.reg[reg])
@@ -150,16 +156,34 @@ class CPU:
 
                 self.reg[self.SP]+=1
             elif Command==CMP:
-                pass
-            elif Command==JMP:
-                pass
-            elif Command==JEQ:
-                pass
-            elif Command==JNE:
-                pass
-
-
-
-
+                # self.alu("CMP", operand_a, operand_b)
+                # print("CMP")
+                self.Flags = 0
+                # print(self.Flags)
+                # print(L,G,E)
+                if self.reg[self.ram_read(self.pc+1)] < self.reg[self.ram_read(self.pc+2)]:
+                    # print(self.Flags,self.reg[self.ram_read(self.pc+1)],self.reg[self.ram_read(self.pc+2)])
+                    self.Flags= L
+                    # L=1
+                    # print("L")
+                elif self.reg[self.ram_read(self.pc+1)] > self.reg[self.ram_read(self.pc+2)]:
+                    self.Flags= G
+                    # G=1
+                    # print("G")
+                elif self.reg[self.ram_read(self.pc+1)] ==self.reg[self.ram_read(self.pc+2)]:
+                    self.Flags= E
+                    # E=1
+                    # print("E")
+                self.pc+=3
                 
-
+            elif Command==JMP:
+                self.pc = self.reg[self.ram_read(self.pc+1)]
+            elif Command==JEQ:
+                if self.Flags:
+                    self.pc = self.reg[self.ram_read(self.pc+1)]
+            elif Command==JNE:
+                print("JNE", self.Flags, E)
+                if self.Flags ==False:
+                    self.pc = self.reg[self.ram_read(self.pc+1)] 
+                else:
+                    self.pc+=2
